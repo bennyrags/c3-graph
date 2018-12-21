@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8">
+    <title>My c3 Test </title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/c3/0.6.11/c3.min.css" />
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.22.2/moment.min.js"></script>
+    <script src="https://d3js.org/d3.v5.min.js"></script>
+ <script src="https://cdnjs.cloudflare.com/ajax/libs/c3/0.6.11/c3.min.js"></script> 
+ <style>
+ h1, h2, h3, h4, h5, h6, p, a, li {
+   font-family:'roboto', Arial, Helvetica, sans-serif;
+ }
+
+ h1 { 
+   text-align:center;
+   margin: 5vh 0 3vh 0;
+   font-size:2rem;
+ }
+
+ h2,h3,h4 {
+   margin: 1vh 0;
+   text-align:center;
+ }
+
+ h2 {
+   margin: 2vh 0;
+   font-size:1.75rem;
+ }
+
+h3 {
+  font-size: 1.5rem;
+}
+
+h4 {
+  font-size: 1.35rem;
+}
+ .eastIsles_col {
+   color:#1F77B4;
+ }
+ .lowryHillEast_col {
+   color:#FF7F0E;
+ }
+
+ .whittier_col {
+   color:#2CA02C;
+ }
+ 
+ a {
+   text-decoration:none;
+ }
+
+
+ .hood_col_gradient {
+   background: linear-gradient(#1f77b4 30%, #ff7f0e, #2ca02c);
+   background-clip: text;
+  -webkit-background-clip: text;
+  color: transparent;
+ }
+
+
+
+
+ </style>
+</head>
+  <body>
+    <h1>Reported Bike Thefts in Three Neighborhoods <br>in the Fifth Precinct of Minneapolis in 2017</h1>
+    <h2>Data Provided by <a href="http://opendata.minneapolismn.gov/">Open Data Minneapolis</a></h2>
+    <div class="hoodDiv hood_col_gradient">
+      <h3>Neighborhoods:</h3>
+      <h4>East Isles</h4>
+      <h4>Lowry Hills East</h4>
+      <h4>Whittier</h4>
+    </div>
+    <main>
+    <div id="chart"></div>
+    </main>
+<script>
+(function(){
+  let eastIsles=[];
+      let lowryHillEast=[];
+      let whittier=[];
+      //fetch the JSON dataset from the Open Data Minneapolis Portal: www.minneapolismn.org/opendata/
+      d3.json("https://services.arcgis.com/afSMGVsC7QlRK1kZ/arcgis/rest/services/Police_Incidents_2017/FeatureServer/0/query?where=Precinct%20%3D%20%2705%27%20AND%20Offense%20like%20%27%25BIKETF%25%27%20AND%20Neighborhood%20like%20%27%25east%20isles%25%27%20OR%20Neighborhood%20like%20%27%25whittier%25%27%20AND%20Offense%20like%20%27%25BIKETF%25%27%20OR%20Neighborhood%20like%20%27%25lowry%20hill%20east%25%27%20AND%20Offense%20like%20%27%25BIKETF%25%27&outFields=Time,Offense,Description,Long,X,Y,Neighborhood,PublicAddress,ReportedDate,Lat&orderByFields=ReportedDate%20ASC&outSR=4326&f=json")
+      .then(function(data) {
+       for (i=0; i < data.features.length; i++) {
+       //format the date using moment
+       data.features[i].attributes.ReportedDate = moment(data.features[i].attributes.ReportedDate).format('lll');
+        //push each bike theft report object into an array based on neighborhood
+       if (data.features[i].attributes.Neighborhood === "EAST ISLES") {
+          eastIsles.push(data.features[i].attributes);
+        }
+        else if (data.features[i].attributes.Neighborhood === "LOWRY HILL EAST") {
+         lowryHillEast.push(data.features[i].attributes);
+        }
+        else {
+         whittier.push(data.features[i].attributes);
+        }
+      }
+    });
+//generate the chart
+let chart = c3.generate({
+data: {
+ x: 'x',
+columns: [
+['x', 'Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'],
+['East Isles', 1, 0, 0, 0, 4, 4, 3, 3, 0, 0, 0, 0],
+['Lowry Hill East', 1, 4, 4, 0, 5, 4, 8, 5, 4, 2, 6, 0],
+['Whittier', 0, 0, 0, 5, 0, 4, 10, 5, 2, 1, 2, 0]
+]
+ }, 
+axis: {
+x: {
+type:'category',
+categories: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec']
+    }
+      }
+});
+})();
+</script>
+</body>
+</html>
