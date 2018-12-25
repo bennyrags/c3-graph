@@ -102,6 +102,7 @@ h4 {
 let chart = c3.generate({
 data: {
  x: 'x',
+ y: 'y',
 columns: [
 ['x', 'Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'],
 ['East Isles', 1, 0, 0, 0, 4, 4, 3, 3, 0, 0, 0, 0],
@@ -113,7 +114,11 @@ axis: {
 x: {
 type:'category',
 categories: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec']
-    }
+    },
+y: {
+min:0,
+max:15
+}
       }
 });
 })();
